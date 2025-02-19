@@ -37,14 +37,15 @@ export default function Modal({
                         onClick={() => setFlipped(!flipped)}
                     >
                         <div
-                            className={`w-64 h-40 flex items-center justify-center rounded-lg shadow-md cursor-pointer ${
+                            className={`w-64 h-40 flex items-center justify-center rounded-lg shadow-md cursor-pointer w-9/12 ${
                                 flipped ? "bg-[var(--lt-blue)]" : "bg-[var(--blue)]"
                             }`}
                         >
-                            <p 
-                                className="text-lg font-medium ${"
+                            <p
+                                className="text-lg font-medium"
                                 style={{
-                                    color: "var(--foreground)"
+                                    color: "var(--foreground)",
+                                    whiteSpace: "pre-line", // Preserve line breaks
                                 }}
                             >
                                 {flipped
@@ -75,7 +76,7 @@ export default function Modal({
                         </div>
                     </div>
                 ) : (
-                    <p className="text-center text-gray-500 mt-4">No cards in this set</p>
+                    <p className="text-center text-white mt-4">No cards in this set</p>
                 )}
             </div>
         </div>

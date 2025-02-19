@@ -98,7 +98,6 @@ export default function CreateFlashcardSet() {
                     className="p-2 rounded"
                   />
                   <textarea
-                    type="text"
                     placeholder="Definition"
                     value={card.definition}
                     onChange={(e) =>
