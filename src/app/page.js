@@ -5,19 +5,22 @@ import { useRouter } from "next/navigation";
 import { auth, db } from "@/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signOut } from "firebase/auth";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc, query, where } from "firebase/firestore";
 import Link from "next/link";
 import Modal from "./modal/page";
 import { BsFillLightningFill } from "react-icons/bs";
+import ConfirmDeleteModal from "./confirmDeleteModal/page";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [user, loading] = useAuthState(auth);
   const [categories, setCategories] = useState([]);
   const [flashcardSets, setFlashcardSets] = useState([]);
   const [selectedSet, setSelectedSet] = useState(null);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
-  const router = useRouter();
+  const [deleteSet, setDeleteSet] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -38,6 +41,34 @@ export default function DashboardPage() {
 
     fetchFlashcardSets();
   }, []);
+
+  const handleDeleteClick = (set) => {
+    setDeleteSet(set);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteSet) return;
+    const setId = deleteSet.id;
+    const category = deleteSet.category;
+
+    try {
+      await deleteDoc(doc(db, "flashcardSets", setId));
+
+      const updatedSets = flashcardSets.filter((set) => set.id !== setId);
+      setFlashcardSets(updatedSets);
+
+      const remainingSets = updatedSets.filter((set) => set.category === category);
+      if (remainingSets.length === 0) {
+        setCategories((prev) => prev.filter((cat) => cat !== category));
+      }
+
+      setIsDeleteModalOpen(false);
+      setDeleteSet(null);
+    } catch (err) {
+      console.error("Error deleting flashcard set:", err);
+    }
+  };
 
   const openModal = (set) => {
     setSelectedSet(set);
@@ -112,13 +143,27 @@ export default function DashboardPage() {
         <hr></hr>
         <div className="space-y-2 text-xl mt-2 flex flex-col items-start text-[var(--background)]">
           {flashcardSets.map((set) => (
-            <button
-              key={set.id}
-              onClick={() => openModal(set)}
-            >
-              ▻ {set.title}
-            </button>
+            <div key={set.id} className="flex justify-between w-full">
+              <button
+                onClick={() => openModal(set)}
+              >
+                ▻ {set.title}
+              </button>
+              <button
+                className="text-[var(--lt-pink)] hover:text-[var(--pink)]"
+                onClick={() => handleDeleteClick(set)}
+              >
+                ✖
+              </button>
+            </div>
           ))}
+
+          <ConfirmDeleteModal 
+            isOpen={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
+            onConfirm={confirmDelete}
+            setTitle={deleteSet?.title}
+          />
         </div>
       </div>
 

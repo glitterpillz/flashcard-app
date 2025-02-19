@@ -57,60 +57,79 @@ export default function CreateFlashcardSet() {
         }
     };
 
+    const handleCancel = () => {
+      router.push("/");
+    }
+
     return (
-        <div className="max-w-2xl mx-auto p-4">
-          <h1 className="text-2xl font-bold">Create Flashcard Set</h1>
-          {error && <p className="text-red-500">{error}</p>}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="text"
-              placeholder="Title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full p-2 border rounded"
-            />
-            <input
-              type="text"
-              placeholder="Category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full p-2 border rounded"
-            />
+        <div className="">
+          <div className="flex items-center justify-center h-20 font-bold bg-[var(--blue)]">
+            <h1 className="text-4xl font-[var(--font-sketch)]">Create Flashcard Set</h1>
+          </div>
+          {error && <p className="text-[var(--pink)]">{error}</p>}
+          
+          <form onSubmit={handleSubmit} className="space-y-4 m-4 flex flex-col">
+            <div className="p-2 bg-[var(--lt-pink)] rounded flex flex-col gap-2">
+              <input
+                type="text"
+                placeholder="Title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full p-2 border rounded"
+              />
+              <input
+                type="text"
+                placeholder="Library"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full p-2 border rounded"
+              />
+            </div>
             
-            {cards.map((card, index) => (
-              <div key={index} className="flex space-x-2">
-                <input
-                  type="text"
-                  placeholder="Term"
-                  value={card.term}
-                  onChange={(e) => handleCardChange(index, "term", e.target.value)}
-                  className="w-1/2 p-2 border rounded"
-                />
-                <input
-                  type="text"
-                  placeholder="Definition"
-                  value={card.definition}
-                  onChange={(e) =>
-                    handleCardChange(index, "definition", e.target.value)
-                  }
-                  className="w-1/2 p-2 border rounded"
-                />
-              </div>
-            ))}
+            <div className="flex flex-col gap-3">
+              {cards.map((card, index) => (
+                <div key={index} className="flex flex-col gap-2 bg-[var(--blue)] p-2 rounded">
+                  <input
+                    type="text"
+                    placeholder="Term"
+                    value={card.term}
+                    onChange={(e) => handleCardChange(index, "term", e.target.value)}
+                    className="p-2 rounded"
+                  />
+                  <textarea
+                    type="text"
+                    placeholder="Definition"
+                    value={card.definition}
+                    onChange={(e) =>
+                      handleCardChange(index, "definition", e.target.value)
+                    }
+                    className="p-2 rounded"
+                  />
+                </div>
+              ))}
+            </div>
     
-            <button
-              type="button"
-              onClick={handleAddCard}
-              className="px-4 py-2 bg-blue-500 text-white rounded"
+            <div className="flex justify-between">
+              <button
+                type="button"
+                onClick={handleAddCard}
+                className="px-4 py-2 bg-[var(--foreground)] text-[var(--background)] rounded"
+              >
+                Add Card
+              </button>
+      
+              <button
+                type="submit"
+                className="px-4 py-2 bg-[var(--lt-pink)] text-white rounded"
+              >
+                Save Flashcard Set
+              </button>
+            </div>
+            <button 
+              className="self-end"
+              onClick={handleCancel}  
             >
-              Add Card
-            </button>
-    
-            <button
-              type="submit"
-              className="px-4 py-2 bg-lt-pink-500 text-white rounded"
-            >
-              Save Flashcard Set
+              Cancel
             </button>
           </form>
         </div>

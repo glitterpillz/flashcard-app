@@ -42,3 +42,7 @@ h1 {
 hr {
   border: 1px solid;
 }
+
+input:focus, textarea:focus {
+  outline-color: var(--foreground);
+}
