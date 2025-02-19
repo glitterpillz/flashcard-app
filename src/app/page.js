@@ -30,17 +30,23 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchFlashcardSets = async () => {
-      const querySnapshot = await getDocs(collection(db, "flashcardSets"));
+      if (!user) return; // Ensure user is logged in
+  
+      const q = query(collection(db, "flashcardSets"), where("userId", "==", user.uid));
+      const querySnapshot = await getDocs(q);
       const sets = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data()}));
-
+  
       const uniqueCategories = [...new Set(sets.map((set) => set.category))];
-
+  
       setFlashcardSets(sets);
       setCategories(uniqueCategories);
     };
-
-    fetchFlashcardSets();
-  }, []);
+  
+    if (user) {
+      fetchFlashcardSets();
+    }
+  }, [user]); // Depend on user to re-fetch when they change
+  
 
   const handleDeleteClick = (set) => {
     setDeleteSet(set);
