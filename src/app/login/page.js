@@ -44,41 +44,47 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="">
-      <div className="">
-        <h1 className="">{isRegistering ? "SIGN UP" : "LOGIN"}</h1>
+    <div className="p-0">
+      <div className="flex items-center justify-center h-20 font-bold bg-[var(--blue)]">
+        <h1 className="text-5xl font-[var(--font-sketch)] text-[var(--background)]">{isRegistering ? "SIGN UP" : "LOGIN"}</h1>
       </div>
       
-      <div className="">
-        <form onSubmit={handleEmailAuth} className="">
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className=""
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className=""
-          />
-          {error && <p className="">{error}</p>}
-          <button type="submit" className="">
+      <div className="m-4 flex flex-col gap-5">
+        <form onSubmit={handleEmailAuth} className="flex flex-col">
+          <div className="flex flex-col gap-2">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-[75%] self-center px-4 py-2 text-xl rounded"
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-[75%] self-center px-4 py-2 text-xl rounded"
+            />
+            {error && <p className="">{error}</p>}
+
+          </div>
+          <button type="submit" className="mt-5 px-4 py-2 self-center bg-[var(--pink)] text-white text-xl rounded hover:shadow-lg hover:text-[var(--background)]">
             {isRegistering ? "Sign Up" : "Login"}
           </button>
         </form>
 
-        <div className="">
-          <button onClick={signInWithGoogle} className="">
+        <div className="flex flex-col">
+          <button onClick={signInWithGoogle} className="text-lg hover:text-white">
             Sign in with Google
           </button>
 
-          <button onClick={() => setIsRegistering(!isRegistering)} className="">
+          <button 
+            onClick={() => setIsRegistering(!isRegistering)} 
+            className="bg-[var(--foreground)] text-white self-center px-4 py-2 rounded mt-3 hover:shadow-lg hover:text-[var(--background)]"
+          >
             {isRegistering ? "Already have an account? Log in" : "Don't have an account? Sign up"}
           </button>
         </div>
