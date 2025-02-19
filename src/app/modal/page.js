@@ -1,14 +1,19 @@
 "use client";
 
 export default function Modal({ 
-    selectedSet, 
-    currentCardIndex, 
-    closeModal, 
-    nextCard, 
-    prevCard, 
-    flipped, 
-    setFlipped
-}) {
+        selectedSet, 
+        currentCardIndex, 
+        closeModal, 
+        nextCard, 
+        prevCard, 
+        flipped, 
+        setFlipped
+    }) {
+
+    if (!selectedSet) {
+        return null;
+    }
+
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
             <div className="bg-[var(--foreground)] p-6 rounded-lg shadow-lg w-[90%] relative">
