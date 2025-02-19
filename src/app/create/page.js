@@ -57,7 +57,8 @@ export default function CreateFlashcardSet() {
         }
     };
 
-    const handleCancel = () => {
+    const handleCancel = (e) => {
+      e.preventDefault();
       router.push("/");
     }
 
