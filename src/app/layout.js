@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono, Sour_Gummy } from "next/font/google";
+import { Geist, Geist_Mono, Sour_Gummy, Londrina_Sketch } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,6 +16,12 @@ const sourGummy = Sour_Gummy({
   subsets: ['latin'],
 });
 
+const sketch = Londrina_Sketch({
+  weight: '400',
+  variable: "--font-sketch",
+  subsets: ['latin'],
+});
+
 export const metadata = {
   title: "Flash",
   description: "FlashCard App",
@@ -29,6 +35,7 @@ export default function RootLayout({ children }) {
           ${geistSans.variable} 
           ${geistMono.variable}
           ${sourGummy.variable}
+          ${sketch.variable}
           antialiased`}
       >
         {children}

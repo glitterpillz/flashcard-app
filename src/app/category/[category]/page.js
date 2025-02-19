@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { db } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import Modal from "@/app/modal/page";
 
 export default function CategoryPage() {
     const router = useRouter();
@@ -54,76 +55,55 @@ export default function CategoryPage() {
     };
 
     const handleGoHome = () => {
-        router.push("/")
-    }
+        router.push("/");
+    };
 
     return (
-        <div className="p-4">
-            <h1>Category: {category}</h1>
-            <div>
+        <div className="p-0">
+            <div className="flex items-center justify-center h-20 font-bold bg-[var(--blue)]">
+                <h1 
+                    className="text-5xl font-[var(--font-sketch)] text-[var(--background)]"
+                >
+                    {category}
+                </h1>
+            </div>
+
+
+            <div className="my-8 mx-16">
                 {flashcardSets.map((set) => (
                     <button
                         key={set.id}
                         onClick={() => openModal(set)}
+                        className="bg-[var(--foreground)] text-[var(--background)] w-full py-2 rounded shadow-md"
+                        style={{
+                            fontSize: "20px"
+                        }}
                     >
                         {set.title}
                     </button>
                 ))}
             </div>
 
+            {/* Pass currentCardIndex and other necessary props to the Modal component */}
             {selectedSet && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-96 relative">
-                        <button
-                            className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
-                            onClick={closeModal}
-                        >
-                            ✖
-                        </button>
-                        <h2 className="text-xl font-bold text-center">{selectedSet.title}</h2>
-                        {selectedSet.cards.length > 0 ? (
-                            <div
-                                className="mt-4 flex flex-col items-center"
-                                onClick={() => setFlipped(!flipped)}
-                            >
-                                <div className="w-64 h-40 bg-gray-200 flex items-center justify-center rounded-lg shadow-md cursor-pointer">
-                                    <p className="text-lg font-medium">
-                                        {flipped
-                                            ? selectedSet.cards[currentCardIndex].definition
-                                            : selectedSet.cards[currentCardIndex].term}
-                                    </p>
-                                </div>
-                                <p className="text-sm text-gray-500 mt-2">Click to flip</p>
-                                <div className="flex justify-between w-full mt-4">
-                                    <button
-                                        className="px-4 py-2 bg-gray-500 text-white rounded-lg"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            prevCard();
-                                        }}
-                                    >
-                                        ◀ Prev
-                                    </button>
-                                    <button
-                                        className="px-4 py-2 bg-gray-500 text-white rounded-lg"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            nextCard();
-                                        }}
-                                    >
-                                        Next ▶
-                                    </button>
-                                </div>
-                            </div>
-                        ) : (
-                            <p className="text-center text-gray-500 mt-4">No cards in this set</p>
-                        )}
-                    </div>
-                    <div>
-                        <button onClick={handleGoHome}>Home</button>
-                    </div>
-                </div>
+                <Modal
+                    selectedSet={selectedSet}
+                    currentCardIndex={currentCardIndex}  // Add this line
+                    closeModal={closeModal}
+                    nextCard={nextCard}
+                    prevCard={prevCard}
+                    flipped={flipped}
+                    setFlipped={setFlipped}
+                />
             )}
+            <div className="flex flex-col items-center">
+                <button 
+                    onClick={handleGoHome}
+                    className="px-4 py-2 bg-[var(--pink)] text-white rounded"
+                >
+                    Home
+                </button>
+            </div>
         </div>
-    )
+    );
 }

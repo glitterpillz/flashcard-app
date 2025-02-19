@@ -7,11 +7,16 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { signOut } from "firebase/auth";
 import { collection, getDocs } from "firebase/firestore";
 import Link from "next/link";
+import Modal from "./modal/page";
+import { BsFillLightningFill } from "react-icons/bs";
 
 export default function DashboardPage() {
   const [user, loading] = useAuthState(auth);
   const [categories, setCategories] = useState([]);
   const [flashcardSets, setFlashcardSets] = useState([]);
+  const [selectedSet, setSelectedSet] = useState(null);
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [flipped, setFlipped] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -34,6 +39,28 @@ export default function DashboardPage() {
     fetchFlashcardSets();
   }, []);
 
+  const openModal = (set) => {
+    setSelectedSet(set);
+    setCurrentCardIndex(0);
+    setFlipped(false);
+  };
+
+  const closeModal = () => {
+    setSelectedSet(null);
+  };
+
+  const nextCard = () => {
+    setCurrentCardIndex((prev) => (prev + 1) % selectedSet.cards.length);
+    setFlipped(false);
+  };
+
+  const prevCard = () => {
+    setCurrentCardIndex((prev) => 
+        prev === 0 ? selectedSet.cards.length - 1 : prev - 1
+    );
+    setFlipped(false);
+  };
+
   const handleLogout = () => {
     signOut(auth).then(() => {
       router.push("/login");
@@ -47,37 +74,68 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold">FLASHCARD APP</h1>
+    <div className="p-0">
+      <div className="flex items-center justify-center h-20 font-bold bg-[var(--blue)]">
+        <h1 className="flex text-6xl font-[var(--font-sketch)] text-[var(--background)]">
+          FLASH
+            <span>
+              <BsFillLightningFill 
+                className="text-[var(--lt-pink)]"
+              />
+            </span>
+          APP
+        </h1>
+      </div>
 
-      <div className="my-4">
+      <div className="flex items-center justify-center my-4">
         <Link href="/create">
-          <button className="px-4 py-2 bg-blue-500 text-white rounded">
+          <button className="px-4 py-2 bg-[var(--lt-pink)] text-white rounded">
             Create Flashcard Set
           </button>
         </Link>
       </div>
 
-      <h2 className="text-xl font-semibold">Categories</h2>
-      <div className="space-y-2">
-        {categories.map((category) => (
-          <Link key={category} href={`/category/${category}`} className="block text-blue-500">
-            {category}
-          </Link>
-        ))}
+      <div className="bg-[var(--blue)] mx-4 rounded p-4">
+        <h2 className="text-2xl font-semibold mb-2">Libraries</h2>
+        <hr></hr>
+        <div className="space-y-2 text-xl mt-2">
+          {categories.map((category) => (
+            <Link key={category} href={`/category/${category}`} className="block text-[var(--background)]">
+              ▶ {category}
+            </Link>
+          ))}
+        </div>
       </div>
 
-      <h2 className="text-xl font-semibold mt-4">Your Flashcard Sets</h2>
-      <div className="space-y-2">
-        {flashcardSets.map((set) => (
-          <Link key={set.id} href={`/flashcards/${set.id}`} className="block text-green-500">
-            {set.title}
-          </Link>
-        ))}
+      <div className="bg-[var(--blue)] m-4 mt-5 rounded p-4">
+        <h2 className="text-2xl font-semibold mb-2">Flashcard Sets</h2>
+        <hr></hr>
+        <div className="space-y-2 text-xl mt-2 flex flex-col items-start text-[var(--background)]">
+          {flashcardSets.map((set) => (
+            <button
+              key={set.id}
+              onClick={() => openModal(set)}
+            >
+              ▻ {set.title}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div className="mt-4">
-        <button onClick={handleLogout} className="px-4 py-2 bg-red-500 text-white rounded">
+      {selectedSet && (
+        <Modal
+          selectedSet={selectedSet}
+          currentCardIndex={currentCardIndex}
+          closeModal={closeModal}
+          nextCard={nextCard}
+          prevCard={prevCard}
+          flipped={flipped}
+          setFlipped={setFlipped}
+        />
+      )}
+
+      <div className="mt-5 flex items-center justify-center">
+        <button onClick={handleLogout} className="px-4 py-2 bg-[var(--pink)] text-white rounded">
           Logout
         </button>
       </div>
