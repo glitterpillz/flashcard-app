@@ -37,12 +37,12 @@ export default function Modal({
                         onClick={() => setFlipped(!flipped)}
                     >
                         <div
-                            className={`w-64 h-40 flex items-center justify-center rounded-lg shadow-md cursor-pointer w-9/12 ${
+                            className={`w-9/12 h-40 flex items-center justify-center rounded-lg shadow-md cursor-pointer ${
                                 flipped ? "bg-[var(--lt-blue)]" : "bg-[var(--blue)]"
                             }`}
                         >
                             <p
-                                className="text-lg font-medium"
+                                className="text-lg font-medium px-4 max-h-32 overflow-y-auto"
                                 style={{
                                     color: "var(--foreground)",
                                     whiteSpace: "pre-line", // Preserve line breaks
@@ -53,6 +53,7 @@ export default function Modal({
                                     : selectedSet.cards[currentCardIndex].term}
                             </p>
                         </div>
+
                         <p className="text-sm text-[var(--background)] mt-2">Click to flip</p>
                         <div className="flex justify-between w-full mt-4">
                             <button
