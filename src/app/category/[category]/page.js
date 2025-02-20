@@ -32,6 +32,10 @@ export default function CategoryPage() {
         if (category) fetchSets();
     }, [category]);
 
+    const handleEdit = (set) => {
+        router.push(`/edit-flashcard-set?id=${set.id}`)
+    }
+
     const openModal = (set) => {
         setSelectedSet(set);
         setCurrentCardIndex(0);
@@ -70,18 +74,22 @@ export default function CategoryPage() {
 
 
             <div className="my-8 mx-16">
-                {flashcardSets.map((set) => (
+            {flashcardSets.map((set) => (
+                <div key={set.id} className="flex justify-between items-center my-2">
                     <button
-                        key={set.id}
                         onClick={() => openModal(set)}
-                        className="bg-[var(--foreground)] text-[var(--background)] w-full py-2 rounded shadow-md"
-                        style={{
-                            fontSize: "20px"
-                        }}
+                        className="bg-[var(--foreground)] text-[var(--background)] flex-1 py-2 rounded shadow-md text-lg"
                     >
                         {set.title}
                     </button>
-                ))}
+                    <button
+                        onClick={() => handleEdit(set)}
+                        className="ml-4 px-3 py-2 bg-[var(--blue)] text-white rounded"
+                    >
+                        Edit
+                    </button>
+                </div>
+            ))}
             </div>
 
             {/* Pass currentCardIndex and other necessary props to the Modal component */}

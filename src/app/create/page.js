@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { db } from "@/firebase";
-import { collection, addDoc } from "firebase/firestore";
-import { useRouter } from "next/navigation";
+import { collection, addDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase";
 
@@ -14,12 +14,29 @@ export default function CreateFlashcardSet() {
     const [error, setError] = useState("");
     const router = useRouter();
     const [user, loading] = useAuthState(auth);
+    const searchParams = useSearchParams();
+    const flashcardSetId = searchParams.get("id");
 
     useEffect(() => {
         if (!loading && !user) {
             router.push("/login");
         }
-    })
+
+        const fetchFlashcardSet = async () => {
+          if (flashcardSetId) {
+            const docRef = doc(db, "flashcardSets", flashcardSetId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+              setTitle(data.title);
+              setCategory(data.category);
+              setCards(data.cards || []);
+            }
+          }
+        };
+
+        if (flashcardSetId) fetchFlashcardSet();
+    }, [flashcardSetId, loading, user, router])
 
     const handleAddCard = () => {
         if (cards.length < 500) {
@@ -43,14 +60,23 @@ export default function CreateFlashcardSet() {
         }
 
         try {
-            await addDoc(collection(db, "flashcardSets"), {
-                userId: user.uid,
-                title,
-                category,
-                cards,
-                createdAt: new Date(),
+          if (flashcardSetId) {
+            const docRef = doc(db, "flashcardSets", flashcardSetId);
+            await updateDoc(docRef, {
+              title,
+              category,
+              cards,
             });
-            router.push("/");
+          } else {
+            await addDoc(collection(db, "flashcardSets"), {
+              userId: user.uid,
+              title,
+              category,
+              cards,
+              createdAt: new Date(),
+            });
+          }
+          router.push("/");
         } catch (err) {
             console.error("Error creating flashcard set: ", err);
             setError("Failed to create flashcard set");
@@ -122,7 +148,7 @@ export default function CreateFlashcardSet() {
                 type="submit"
                 className="px-4 py-2 bg-[var(--lt-pink)] text-white rounded"
               >
-                Save Flashcard Set
+                {flashcardSetId ? "Save Changes" : "Save Flashcard Set"}
               </button>
             </div>
             <button 
